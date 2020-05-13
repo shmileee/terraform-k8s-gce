@@ -1,0 +1,5 @@
+.terraform
+.dep_check
+output/
+app/gce_creds.json
+app/terraform.tfstate*
