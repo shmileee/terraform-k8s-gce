@@ -29,13 +29,13 @@ resource "google_compute_network" "default" {
 
 resource "google_compute_subnetwork" "default" {
   name            = "kubernetes"
-  network         = "${google_compute_network.default.name}"
+  network         = "google_compute_network.default.name"
   ip_cidr_range   = "10.240.0.0/24"
 }
 
 resource "google_compute_firewall" "internal" {
   name    = "kubernetes-the-easy-way-allow-internal"
-  network = "${google_compute_network.default.name}"
+  network = "google_compute_network.default.name"
 
   allow {
     protocol = "icmp"
@@ -54,7 +54,7 @@ resource "google_compute_firewall" "internal" {
 
 resource "google_compute_firewall" "external" {
   name    = "kubernetes-the-easy-way-allow-external"
-  network = "${google_compute_network.default.name}"
+  network = "google_compute_network.default.name"
 
   allow {
     protocol = "icmp"
@@ -80,7 +80,7 @@ resource "google_compute_instance" "controller" {
   count = 3
   name            = "controller-${count.index}"
   machine_type    = "n1-standard-1"
-  zone            = "${var.gce_zone}"
+  zone            = var.gce_zone
   can_ip_forward  = true
 
   tags = ["kubernetes-the-easy-way","controller"]
@@ -97,7 +97,7 @@ resource "google_compute_instance" "controller" {
   }
 
   network_interface {
-    subnetwork = "${google_compute_subnetwork.default.name}"
+    subnetwork = google_compute_subnetwork.default.name
     network_ip = "10.240.0.1${count.index}"
 
     access_config {
@@ -125,7 +125,7 @@ resource "google_compute_instance" "worker" {
   count = 3
   name            = "worker-${count.index}"
   machine_type    = "n1-standard-1"
-  zone            = "${var.gce_zone}"
+  zone            = var.gce_zone
   can_ip_forward  = true
 
   tags = ["kubernetes-the-easy-way","worker"]
@@ -142,7 +142,7 @@ resource "google_compute_instance" "worker" {
   }
 
   network_interface {
-    subnetwork = "${google_compute_subnetwork.default.name}"
+    subnetwork = google_compute_subnetwork.default.name
     network_ip = "10.240.0.2${count.index}"
 
     access_config {
