@@ -1,18 +1,23 @@
 plugin: gcp_compute
+use_contrib_script_compatible_sanitization: True
 projects:
   - gameflare-ansible-test
 filters:
-hostnames:                # A list of options that describe the ordering for which hostnames should be assigned. Currently supported hostnames are 'public_ip', 'private_ip', or 'name'.
+hostnames:
   - name
 compose:
   # Set an inventory parameter to use the Public IP address to connect to the host
   # For Private ip use "networkInterfaces[0].networkIP"
-  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP|default(networkInterfaces[0].networkIP)
   ip: networkInterfaces[0].networkIP
-  #access_ip: networkInterfaces[0].accessConfigs[0].natIP
-groups:
-  kube_node: "'worker' in (labels.ansible_group)"
-  kube_master: "'controller' in (labels.ansible_group)"
-  etcd: "'controller' in (labels.ansible_group)"
+  ansible_connection: var|default("ssh")
+  ansible_ssh_private_key_file: var|default("/root/.ssh/id_rsa")
+  ansible_user: var|default("ansible")
+  access_ip: networkInterfaces[0].networkIP
+keyed_groups:
+  # Create groups from GCE tags
+  - prefix: ""
+    separator: ''
+    key: tags['items'] | regex_replace('_', '-')
 auth_kind: serviceaccount
-service_account_file: /root/app/gce_creds.json
+service_account_file: /root/src/gce_creds.json
