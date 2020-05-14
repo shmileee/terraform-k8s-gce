@@ -1,0 +1,18 @@
+plugin: gcp_compute
+projects:
+  - gameflare-ansible-test
+filters:
+hostnames:                # A list of options that describe the ordering for which hostnames should be assigned. Currently supported hostnames are 'public_ip', 'private_ip', or 'name'.
+  - name
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+  ip: networkInterfaces[0].networkIP
+  #access_ip: networkInterfaces[0].accessConfigs[0].natIP
+groups:
+  kube_node: "'worker' in (labels.ansible_group)"
+  kube_master: "'controller' in (labels.ansible_group)"
+  etcd: "'controller' in (labels.ansible_group)"
+auth_kind: serviceaccount
+service_account_file: /root/app/gce_creds.json

@@ -10,7 +10,7 @@ variable "gce_ssh_user" {
   default = "root"
 }
 variable "gce_ssh_pub_key_file" {
-  default = "~/.ssh/google_compute_engine.pub"
+  default = "~/.ssh/id_rsa.pub"
 }
 
 variable "gce_zone" {
@@ -29,13 +29,13 @@ resource "google_compute_network" "default" {
 
 resource "google_compute_subnetwork" "default" {
   name            = "kubernetes"
-  network         = "google_compute_network.default.name"
+  network         = google_compute_network.default.name
   ip_cidr_range   = "10.240.0.0/24"
 }
 
 resource "google_compute_firewall" "internal" {
   name    = "kubernetes-the-easy-way-allow-internal"
-  network = "google_compute_network.default.name"
+  network = google_compute_network.default.name
 
   allow {
     protocol = "icmp"
@@ -54,7 +54,7 @@ resource "google_compute_firewall" "internal" {
 
 resource "google_compute_firewall" "external" {
   name    = "kubernetes-the-easy-way-allow-external"
-  network = "google_compute_network.default.name"
+  network = google_compute_network.default.name
 
   allow {
     protocol = "icmp"
@@ -66,7 +66,7 @@ resource "google_compute_firewall" "external" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "6443"]
+    ports    = ["22", "6443", "2379", "2380"]
   }
 
   source_ranges = [ "0.0.0.0/0" ]
@@ -77,7 +77,7 @@ resource "google_compute_address" "default" {
 }
 
 resource "google_compute_instance" "controller" {
-  count = 3
+  count = 1
   name            = "controller-${count.index}"
   machine_type    = "n1-standard-1"
   zone            = var.gce_zone
@@ -118,11 +118,16 @@ resource "google_compute_instance" "controller" {
     sshKeys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
   }
 
-  metadata_startup_script = "apt-get install -y python"
+  metadata_startup_script = "apt-get install -y python chrony"
+
+  labels = {
+    ansible_group = "controller"
+  }
+
 }
 
 resource "google_compute_instance" "worker" {
-  count = 3
+  count = 5
   name            = "worker-${count.index}"
   machine_type    = "n1-standard-1"
   zone            = var.gce_zone
@@ -164,5 +169,9 @@ resource "google_compute_instance" "worker" {
     sshKeys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
   }
 
-  metadata_startup_script = "apt-get install -y python"
+  metadata_startup_script = "apt-get install -y python chrony"
+
+  labels = {
+    ansible_group = "worker"
+  }
 }

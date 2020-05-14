@@ -1,3 +1,0 @@
-[submodule "app/kubespray"]
-	path = app/kubespray
-	url = git@github.com:shmileee/kubespray.git
