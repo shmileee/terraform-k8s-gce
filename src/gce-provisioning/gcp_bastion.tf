@@ -38,6 +38,17 @@ resource "google_compute_instance" "bastion" {
 
 }
 
+resource "null_resource" "bastion" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers = {
+    bastion_ip = google_compute_address.bastion.address
+  }
+
+  provisioner "local-exec" {
+    command = "sed s/USER/${var.gce_ssh_user}/ gce-provisioning/templates/ansible_bastion_template.txt | sed s/BASTION_ADDRESS/${google_compute_address.bastion.address}/ > miscellaneous/inventory/group_vars/no-ip.yml"
+  }
+}
+
 resource "google_dns_record_set" "bastion_private" {
   name = "bastion.${google_dns_managed_zone.private-zone.dns_name}"
   type = "A"
