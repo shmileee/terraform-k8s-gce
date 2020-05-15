@@ -15,7 +15,7 @@ When you're done, run `./destroy.sh` to remove all GCE resources created with Te
 
 ## GCloud account 
 
-To interact with your GCloud API service account is used. The `gce_creds.json` is your service account key file.
+To interact with GCloud API service account is used. The `gce_creds.json` is your service account key file.
 You can find more information on how to setup a service account [here](https://cloud.google.com/video-intelligence/docs/common/auth#set_up_a_service_account).
 
 ## Terraform topology
