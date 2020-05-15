@@ -20,7 +20,7 @@ You can find more information on how to setup a service account [here](https://c
 
 ## Terraform topology
 
-By default, Terraform will create DNS zone, network routers, 3 compute instances (1 bastion, 1 kube-master and 1 kube-node).
+By default, Terraform will create DNS zone, public & private networks, 3 compute instances (1 bastion, 1 kube-master and 1 kube-node).
 
 ## Ansible inventory
 
