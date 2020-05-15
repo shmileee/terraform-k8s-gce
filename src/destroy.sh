@@ -7,4 +7,4 @@ terraform destroy \
     -var "gce_sa_email=${GCE_EMAIL}" \
     -var "gce_network=${GCLOUD_NETWORK}" \
     -var "gce_subnetwork=${GCLOUD_REGION}" \
-    -force gce-provisioning/
+    -force $@ gce-provisioning/

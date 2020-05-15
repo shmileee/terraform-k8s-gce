@@ -12,7 +12,7 @@ sed -i= 's/^[# ]*net.ipv4.ip_forward=[[:digit:]]/net.ipv4.ip_forward=1/g' /etc/s
 iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE
 
 # Install nginx for instance http health check
-apt-get install -y nginx
+apt-get install -y nginx iputils-ping
 
 ENABLE_SQUID="true"
 

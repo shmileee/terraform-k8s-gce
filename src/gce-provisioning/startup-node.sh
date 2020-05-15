@@ -7,4 +7,4 @@ export ftp_proxy=http://bastion.k8s.gameflare.com:3128
 export no_proxy=127.0.0.1,localhost
 EOF
 
-apt-get install -y python chrony
+apt-get install -y python chrony iputils-ping
