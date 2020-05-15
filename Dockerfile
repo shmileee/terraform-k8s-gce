@@ -1,5 +1,8 @@
 FROM python:alpine3.10
 
+ARG VCS_REF
+ARG BUILD_DATE
+
 ENV TERRAFORM_VERSION=0.12.24 \
     GCLOUD_SDK_VERSION=292.0.0 \
     KUBE_VERSION=v1.18.2 \
@@ -40,5 +43,18 @@ ADD src/ansible.cfg /root/.ansible.cfg
 ADD src/ansible.cfg /root/kubespray/ansible.cfg
 
 WORKDIR /root/src
+
+# Metadata
+LABEL maintainer="Aleksandr Ponomarov <ponomarov.aleksandr@gmail.com>" \
+      org.label-schema.url="https://github.com/shmileee/terraform-k8s-gce/" \
+      org.label-schema.build-date=${BUILD_DATE} \
+      org.label-schema.vcs-url="git@github.com:shmileee/terraform-k8s-gce.git" \
+      org.label-schema.vcs-ref=${VCS_REF} \
+      org.label-schema.vcs-type="Git" \
+      org.label-schema.docker.dockerfile="Dockerfile" \
+      org.label-schema.docker.cmd="docker run -it -v ./src:/root/src -v ~/.ssh:/root/.ssh --name k8s-on-gce-toolset k8s-on-gce-toolset" \
+      org.label-schema.description="Toolset for deploying Kubernetes cluster on GCE with Terraform and Ansible" \
+      org.label-schema.usage="https://github.com/shmileee/terraform-k8s-gce/blob/master/README.md" \
+      org.label-schema.schema-version="1.0"
 
 ENTRYPOINT [ "/bin/bash" ]
